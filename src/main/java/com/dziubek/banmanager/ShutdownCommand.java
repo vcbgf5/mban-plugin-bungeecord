@@ -20,8 +20,11 @@ import java.util.concurrent.TimeUnit;
  * /shutdown <serwer|all> <sekundy> [powod] - odlicza na czacie GRACZOM NA TYM SERWERZE (albo
  * wszystkim, jeśli "all"), a po odliczeniu przenosi ich na inny wolny serwer (jeśli jakiś jest)
  * albo rozłącza. Serwer zostaje potem oznaczony jako "zamknięty" - nikt nowy nie wejdzie, dopóki
- * admin nie zrobi /shutdown cancel. To NIE zabija procesu Javy backendu (proxy tego nie potrafi) -
- * tylko blokuje/opróżnia serwer na poziomie proxy; sam restart/wyłączenie procesu robi się osobno.
+ * admin nie zrobi /shutdown cancel (albo /startserver). Jeśli backend ma zainstalowany
+ * BackendManager, tuż przed rozłączeniem graczy wysyłany jest też sygnał "SHUTDOWN" kanałem
+ * "banmanager:control" - BackendManager wtedy naprawdę wyłącza proces (getServer().shutdown()).
+ * Bez BackendManagera na danym serwerze sygnał nie ma efektu - serwer zostaje tylko zablokowany/
+ * opróżniony na poziomie proxy, sam proces trzeba wyłączyć osobno.
  */
 public class ShutdownCommand extends Command implements TabExecutor {
 
@@ -120,6 +123,10 @@ public class ShutdownCommand extends Command implements TabExecutor {
     private void executeShutdown(String scope, String reason, String by) {
         if (scope.equals("ALL")) {
             plugin.getMaintenance().closeAll();
+            // sygnał SHUTDOWN musi polecieć ZANIM rozłączymy graczy - inaczej nie ma już transportu
+            for (ServerInfo info : ProxyServer.getInstance().getServers().values()) {
+                ControlChannel.sendShutdown(info, reason);
+            }
             for (ProxiedPlayer player : new ArrayList<>(ProxyServer.getInstance().getPlayers())) {
                 player.disconnect(TextComponent.fromLegacyText("§4§lSERWER ZAMKNIĘTY\n§7Powód: §f" + reason
                         + "\n§7Przez: §f" + by + "\n§7Spróbuj ponownie za chwilę."));
@@ -132,6 +139,7 @@ public class ShutdownCommand extends Command implements TabExecutor {
         if (info == null) {
             return;
         }
+        ControlChannel.sendShutdown(info, reason);
         for (ProxiedPlayer player : new ArrayList<>(info.getPlayers())) {
             ServerInfo alt = findOpenAlternative(scope);
             if (alt != null) {

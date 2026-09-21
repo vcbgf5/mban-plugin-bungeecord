@@ -41,6 +41,7 @@ public class BanManagerPlugin extends Plugin {
         ShutdownCommand shutdownCommand = new ShutdownCommand(this);
         getProxy().getPluginManager().registerCommand(this, shutdownCommand);
         getProxy().getPluginManager().registerCommand(this, new StartServerCommand(shutdownCommand));
+        getProxy().getPluginManager().registerCommand(this, new PraceTechCommand(shutdownCommand));
 
         getProxy().getPluginManager().registerCommand(this, new BroadcastCommand());
         getProxy().getPluginManager().registerCommand(this, new AlertCommand());
@@ -62,9 +63,11 @@ public class BanManagerPlugin extends Plugin {
         getProxy().getPluginManager().registerListener(this, new BanListener(this));
         getProxy().getPluginManager().registerListener(this, new MaintenanceListener(this));
         getProxy().getPluginManager().registerListener(this, new MuteListener(this));
+        getProxy().getPluginManager().registerListener(this, new VanishSyncListener(this));
 
         getProxy().registerChannel("banmanager:query");
         getProxy().getPluginManager().registerListener(this, new BanQueryListener(this));
+        getProxy().registerChannel(ControlChannel.CHANNEL);
 
         getLogger().info("BanManager wlaczony - aktywnych banow: " + storage.count() + ", wyciszen: " + mutes.list(null).size());
     }

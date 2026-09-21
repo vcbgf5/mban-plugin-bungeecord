@@ -20,7 +20,8 @@ import java.io.IOException;
  *
  * Protokol: Bukkit wysyla UTF z nazwa docelowego serwera; proxy odsyla UTF (ta sama nazwa, do
  * dopasowania odpowiedzi po stronie Bukkit), boolean (czy zbanowany), a jesli tak - UTF zasieg
- * ("GLOBAL" albo nazwa serwera), UTF powod, UTF kto zbanowal, long expires-at (-1 = na zawsze).
+ * ("GLOBAL" albo nazwa serwera), UTF powod, UTF kto zbanowal, long expires-at (-1 = na zawsze),
+ * a na koncu boolean - czy docelowy serwer jest zamkniety (/shutdown - "prace techniczne").
  */
 public class BanQueryListener implements Listener {
 
@@ -64,6 +65,7 @@ public class BanQueryListener implements Listener {
                 out.writeUTF(ban.getBy());
                 out.writeLong(ban.getExpiresAt());
             }
+            out.writeBoolean(plugin.getMaintenance().isClosed(targetServer));
             player.sendData(CHANNEL, byteOut.toByteArray());
         } catch (IOException e) {
             plugin.getLogger().warning("Blad odczytu zapytania o ban: " + e.getMessage());
