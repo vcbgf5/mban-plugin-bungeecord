@@ -2,3 +2,12 @@
 # z calego proxy), jesli akurat tam jest w momencie nalozenia bana albo proby wejscia.
 # Puste = wybierany automatycznie pierwszy dostepny serwer, na ktorym gracz nie ma bana.
 fallback-server: ''
+
+# Awaryjny transport dla banmanager:control (realny /vanish i /shutdown), gdy na docelowym
+# serwerze nie ma ani jednego gracza - zwykly plugin messaging wymaga polaczenia gracza jako
+# transportu, wiec bez niego np. /shutdown wydany na pustym serwerze nigdy by naprawde nie
+# wylaczyl backendu. Wtedy proxy laczy sie wprost gniazdem TCP do BackendManagera na porcie
+# gry danego serwera + control-port-offset. control-secret MUSI byc IDENTYCZNY jak w config.yml
+# kazdego BackendManagera na backendach - inaczej polaczenie zostanie odrzucone.
+control-port-offset: 2000
+control-secret: 'zmien-to-haslo'

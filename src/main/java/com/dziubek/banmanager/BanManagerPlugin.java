@@ -18,11 +18,15 @@ public class BanManagerPlugin extends Plugin {
     private VanishManager vanish;
     private WarnManager warnings;
     private String fallbackServer = "";
+    private int controlPortOffset = 2000;
+    private String controlSecret = "zmien-to-haslo";
 
     @Override
     public void onEnable() {
         Configuration config = loadOrCreateConfig();
         fallbackServer = config.getString("fallback-server", "");
+        controlPortOffset = config.getInt("control-port-offset", 2000);
+        controlSecret = config.getString("control-secret", "zmien-to-haslo");
 
         storage = new BanStorage(this);
         storage.load();
@@ -77,6 +81,8 @@ public class BanManagerPlugin extends Plugin {
     public void reload() {
         Configuration config = loadOrCreateConfig();
         fallbackServer = config.getString("fallback-server", "");
+        controlPortOffset = config.getInt("control-port-offset", 2000);
+        controlSecret = config.getString("control-secret", "zmien-to-haslo");
         storage.load();
         mutes.load();
     }
@@ -103,6 +109,14 @@ public class BanManagerPlugin extends Plugin {
 
     public String getFallbackServer() {
         return fallbackServer;
+    }
+
+    public int getControlPortOffset() {
+        return controlPortOffset;
+    }
+
+    public String getControlSecret() {
+        return controlSecret;
     }
 
     private Configuration loadOrCreateConfig() {

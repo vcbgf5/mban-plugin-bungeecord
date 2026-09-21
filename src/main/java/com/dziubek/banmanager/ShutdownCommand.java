@@ -125,7 +125,7 @@ public class ShutdownCommand extends Command implements TabExecutor {
             plugin.getMaintenance().closeAll();
             // sygnał SHUTDOWN musi polecieć ZANIM rozłączymy graczy - inaczej nie ma już transportu
             for (ServerInfo info : ProxyServer.getInstance().getServers().values()) {
-                ControlChannel.sendShutdown(info, reason);
+                ControlChannel.sendShutdown(plugin, info, reason);
             }
             for (ProxiedPlayer player : new ArrayList<>(ProxyServer.getInstance().getPlayers())) {
                 player.disconnect(TextComponent.fromLegacyText("§4§lSERWER ZAMKNIĘTY\n§7Powód: §f" + reason
@@ -139,7 +139,7 @@ public class ShutdownCommand extends Command implements TabExecutor {
         if (info == null) {
             return;
         }
-        ControlChannel.sendShutdown(info, reason);
+        ControlChannel.sendShutdown(plugin, info, reason);
         for (ProxiedPlayer player : new ArrayList<>(info.getPlayers())) {
             ServerInfo alt = findOpenAlternative(scope);
             if (alt != null) {
