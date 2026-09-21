@@ -42,6 +42,7 @@ public class BanManagerPlugin extends Plugin {
         getProxy().getPluginManager().registerCommand(this, shutdownCommand);
         getProxy().getPluginManager().registerCommand(this, new StartServerCommand(shutdownCommand));
         getProxy().getPluginManager().registerCommand(this, new PraceTechCommand(shutdownCommand));
+        getProxy().getPluginManager().registerCommand(this, new EndPraceTechCommand(shutdownCommand));
 
         getProxy().getPluginManager().registerCommand(this, new BroadcastCommand());
         getProxy().getPluginManager().registerCommand(this, new AlertCommand());

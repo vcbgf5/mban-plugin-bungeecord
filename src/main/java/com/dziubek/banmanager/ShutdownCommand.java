@@ -188,6 +188,28 @@ public class ShutdownCommand extends Command implements TabExecutor {
                 : "§eNie było aktywnego odliczenia ani zamknięcia dla " + describeScope(scope) + "."));
     }
 
+    /**
+     * /endpracetech - twardy reset: kasuje WSZYSTKIE aktywne odliczenia i otwiera WSZYSTKO,
+     * niezależnie od tego czy zamknięcie było przez "all" czy pojedyncze serwery. Naprawia
+     * sytuację, gdy /startserver na jednym serwerze nic nie daje, bo flaga "cały proxy zamknięty"
+     * (ustawiona przez /shutdown all albo /pracetech all) zostaje - reopen pojedynczego serwera
+     * jej nie zdejmuje, więc isClosed() dalej zwraca true dla wszystkich.
+     */
+    public void forceEndAll(CommandSender sender) {
+        for (String scope : new ArrayList<>(activeCountdowns.keySet())) {
+            ScheduledTask task = activeCountdowns.remove(scope);
+            if (task != null) {
+                task.cancel();
+            }
+        }
+        plugin.getMaintenance().reopenAll();
+
+        for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+            player.sendMessage(TextComponent.fromLegacyText("§a§lPRACE TECHNICZNE ZAKOŃCZONE §7- wszystkie serwery otwarte."));
+        }
+        sender.sendMessage(TextComponent.fromLegacyText("§aWymuszono zakończenie WSZYSTKICH prac technicznych/zamknięć i anulowano wszystkie odliczenia."));
+    }
+
     private void handleList(CommandSender sender) {
         sender.sendMessage(TextComponent.fromLegacyText("§8§m----§r §e§lStan zamknięć §8§m----"));
         boolean any = false;
