@@ -1,0 +1,4 @@
+# Serwer, na ktory probujemy przekierowac gracza zbanowanego per-serwer (zamiast wyrzucac go
+# z calego proxy), jesli akurat tam jest w momencie nalozenia bana albo proby wejscia.
+# Puste = wybierany automatycznie pierwszy dostepny serwer, na ktorym gracz nie ma bana.
+fallback-server: ''

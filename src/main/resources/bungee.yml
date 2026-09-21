@@ -1,0 +1,5 @@
+name: BanManager
+main: com.dziubek.banmanager.BanManagerPlugin
+version: 1.0.0
+author: Dziubek
+description: Zarzadzanie banami (globalnymi i per-serwer) na proxy BungeeCord - /mban /mbanip /munban /munbanip /mbanlist. Uprawnienia (banmanager.ban / banmanager.unban / banmanager.banlist) dostaja automatycznie operatorzy proxy (ops.txt) - dla innych nadaj je przez swoj plugin uprawnien (np. LuckPerms-BungeeCord).
