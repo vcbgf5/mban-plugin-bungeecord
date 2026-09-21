@@ -23,6 +23,17 @@ jobs:
       - name: Compute version
         run: echo "VERSION=1.0.$(( ${{ github.run_number }} - 1 ))" >> "$GITHUB_ENV"
 
+      - name: DEBUG list bungeecord-api versions
+        run: |
+          echo "--- papermc ---"
+          curl -sS "https://repo.papermc.io/repository/maven-public/net/md-5/bungeecord-api/maven-metadata.xml" || true
+          echo
+          echo "--- spigotmc snapshots ---"
+          curl -sS "https://repo.spigotmc.org/content/repositories/snapshots/net/md-5/bungeecord-api/maven-metadata.xml" || true
+          echo
+          echo "--- spigotmc public ---"
+          curl -sS "https://hub.spigotmc.org/nexus/content/repositories/snapshots/net/md-5/bungeecord-api/maven-metadata.xml" || true
+
       - name: Build
         run: mvn clean package
 
