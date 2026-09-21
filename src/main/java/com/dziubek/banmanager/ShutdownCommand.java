@@ -102,10 +102,16 @@ public class ShutdownCommand extends Command implements TabExecutor {
         broadcastToScope(scope, "§c§l⚠ ZAMKNIĘCIE " + describeScope(scope).toUpperCase() + " ZA " + formatSeconds(totalSeconds) + " §7- " + reason);
 
         int[] remaining = {totalSeconds};
-        ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(plugin, () -> {
+        // .schedule(..., 1, 1, SECONDS) tworzy zadanie CYKLICZNE (powtarza się co sekundę
+        // w nieskończoność) - samo usunięcie z activeCountdowns go NIE zatrzymuje, trzeba
+        // jawnie wywołać task.cancel() w momencie zakończenia odliczania, inaczej leci dalej
+        // co sekundę na zawsze i wysyła kolejne realne SHUTDOWN co sekundę, bez końca.
+        ScheduledTask[] taskHolder = new ScheduledTask[1];
+        taskHolder[0] = ProxyServer.getInstance().getScheduler().schedule(plugin, () -> {
             remaining[0]--;
             if (remaining[0] <= 0) {
                 activeCountdowns.remove(scope);
+                taskHolder[0].cancel();
                 executeShutdown(scope, reason, by);
                 return;
             }
@@ -117,7 +123,7 @@ public class ShutdownCommand extends Command implements TabExecutor {
             }
         }, 1, 1, TimeUnit.SECONDS);
 
-        activeCountdowns.put(scope, task);
+        activeCountdowns.put(scope, taskHolder[0]);
     }
 
     private void executeShutdown(String scope, String reason, String by) {
