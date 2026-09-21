@@ -1,6 +1,5 @@
 package com.dziubek.banmanager;
 
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -35,31 +34,21 @@ public class MaintenanceListener implements Listener {
             return;
         }
 
-        ServerInfo alt = findOpenAlternative(server);
+        String text = "§4§lSERWER ZAMKNIĘTY\n§7" + (plugin.getMaintenance().isAllClosed()
+                ? "Cały proxy jest obecnie zamknięty (prace techniczne)." : "Serwer '" + server + "' jest obecnie zamknięty (prace techniczne).");
+
+        ServerInfo alt = MenuHelper.findOpenAlternative(server, plugin);
         if (alt != null) {
+            player.sendMessage(TextComponent.fromLegacyText(text));
             event.setTarget(alt);
             return;
         }
 
         event.setCancelled(true);
-        String text = "§4§lSERWER ZAMKNIĘTY\n§7" + (plugin.getMaintenance().isAllClosed()
-                ? "Cały proxy jest obecnie zamknięty (prace techniczne)." : "Serwer '" + server + "' jest obecnie zamknięty (prace techniczne).");
         if (player.getServer() != null) {
             player.sendMessage(TextComponent.fromLegacyText(text));
         } else {
             player.disconnect(TextComponent.fromLegacyText(text));
         }
-    }
-
-    private ServerInfo findOpenAlternative(String excluded) {
-        for (ServerInfo info : ProxyServer.getInstance().getServers().values()) {
-            if (info.getName().equalsIgnoreCase(excluded)) {
-                continue;
-            }
-            if (!plugin.getMaintenance().isClosed(info.getName())) {
-                return info;
-            }
-        }
-        return null;
     }
 }

@@ -98,4 +98,29 @@ public final class MenuHelper {
         }
         return ip != null && plugin.getStorage().findBlocking(BanEntry.Type.IP, ip, server) != null;
     }
+
+    /**
+     * Jak findAlternative, ale dla zamkniec (/shutdown, /pracetech, MaintenanceListener) - zamiast
+     * sprawdzac bany, sprawdza ktory serwer NIE jest zamkniety. Preferuje skonfigurowany
+     * "fallback-server" - bez tego pierwszy z brzegu serwer z pelnej listy zarejestrowanych na
+     * proxy moze trafic na serwer infrastrukturalny (np. limbo), a nie na prawdziwe lobby.
+     */
+    public static ServerInfo findOpenAlternative(String excluded, BanManagerPlugin plugin) {
+        String fallback = plugin.getFallbackServer();
+        if (fallback != null && !fallback.isEmpty() && !fallback.equalsIgnoreCase(excluded)) {
+            ServerInfo info = ProxyServer.getInstance().getServerInfo(fallback);
+            if (info != null && !plugin.getMaintenance().isClosed(fallback)) {
+                return info;
+            }
+        }
+        for (ServerInfo info : ProxyServer.getInstance().getServers().values()) {
+            if (info.getName().equalsIgnoreCase(excluded)) {
+                continue;
+            }
+            if (!plugin.getMaintenance().isClosed(info.getName())) {
+                return info;
+            }
+        }
+        return null;
+    }
 }

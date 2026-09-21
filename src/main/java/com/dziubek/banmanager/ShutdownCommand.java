@@ -147,7 +147,7 @@ public class ShutdownCommand extends Command implements TabExecutor {
         }
         ControlChannel.sendShutdown(plugin, info, reason);
         for (ProxiedPlayer player : new ArrayList<>(info.getPlayers())) {
-            ServerInfo alt = findOpenAlternative(scope);
+            ServerInfo alt = MenuHelper.findOpenAlternative(scope, plugin);
             if (alt != null) {
                 player.sendMessage(TextComponent.fromLegacyText("§c" + scope + " został zamknięty (" + reason + ") - przenoszę Cię."));
                 player.connect(alt);
@@ -158,17 +158,6 @@ public class ShutdownCommand extends Command implements TabExecutor {
         }
     }
 
-    private ServerInfo findOpenAlternative(String excluded) {
-        for (ServerInfo info : ProxyServer.getInstance().getServers().values()) {
-            if (info.getName().equalsIgnoreCase(excluded)) {
-                continue;
-            }
-            if (!plugin.getMaintenance().isClosed(info.getName())) {
-                return info;
-            }
-        }
-        return null;
-    }
 
     /** Odwoluje aktywne odliczenie (jesli trwa) i otwiera z powrotem - uzywane tez przez /startserver. */
     public void cancel(CommandSender sender, String rawScope) {
