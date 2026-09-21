@@ -13,15 +13,21 @@ import java.util.List;
 /** /munbanip <IP> [global|serwer] - dziala tak samo jak /munban, ale dla adresow IP. */
 public class UnbanIpCommand extends Command implements TabExecutor {
 
+    private static final String PERMISSION = "banmanager.unban";
+
     private final BanManagerPlugin plugin;
 
     public UnbanIpCommand(BanManagerPlugin plugin) {
-        super("munbanip", "banmanager.unban");
+        super("munbanip", null);
         this.plugin = plugin;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!Permissions.has(sender, PERMISSION)) {
+            sender.sendMessage(TextComponent.fromLegacyText("§cNie masz uprawnień do tej komendy."));
+            return;
+        }
         if (args.length == 0) {
             sender.sendMessage(TextComponent.fromLegacyText("§cUzycie: /munbanip <IP> [global|serwer]"));
             return;

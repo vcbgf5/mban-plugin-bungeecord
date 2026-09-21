@@ -17,15 +17,21 @@ import java.util.List;
  */
 public class UnbanCommand extends Command implements TabExecutor {
 
+    private static final String PERMISSION = "banmanager.unban";
+
     private final BanManagerPlugin plugin;
 
     public UnbanCommand(BanManagerPlugin plugin) {
-        super("munban", "banmanager.unban");
+        super("munban", null);
         this.plugin = plugin;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!Permissions.has(sender, PERMISSION)) {
+            sender.sendMessage(TextComponent.fromLegacyText("§cNie masz uprawnień do tej komendy."));
+            return;
+        }
         if (args.length == 0) {
             sender.sendMessage(TextComponent.fromLegacyText("§cUzycie: /munban <gracz> [global|serwer]"));
             return;

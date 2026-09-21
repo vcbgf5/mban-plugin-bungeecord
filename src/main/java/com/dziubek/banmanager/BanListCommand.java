@@ -14,16 +14,21 @@ import java.util.List;
 public class BanListCommand extends Command implements TabExecutor {
 
     private static final int PAGE_SIZE = 15;
+    private static final String PERMISSION = "banmanager.banlist";
 
     private final BanManagerPlugin plugin;
 
     public BanListCommand(BanManagerPlugin plugin) {
-        super("mbanlist", "banmanager.banlist");
+        super("mbanlist", null);
         this.plugin = plugin;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!Permissions.has(sender, PERMISSION)) {
+            sender.sendMessage(TextComponent.fromLegacyText("§cNie masz uprawnień do tej komendy."));
+            return;
+        }
         String scope = null;
         String search = null;
 

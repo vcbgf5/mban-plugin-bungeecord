@@ -18,15 +18,21 @@ import java.util.List;
  */
 public class BanIpCommand extends Command implements TabExecutor {
 
+    private static final String PERMISSION = "banmanager.ban";
+
     private final BanManagerPlugin plugin;
 
     public BanIpCommand(BanManagerPlugin plugin) {
-        super("mbanip", "banmanager.ban");
+        super("mbanip", null);
         this.plugin = plugin;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!Permissions.has(sender, PERMISSION)) {
+            sender.sendMessage(TextComponent.fromLegacyText("§cNie masz uprawnień do tej komendy."));
+            return;
+        }
         if (args.length == 0) {
             sender.sendMessage(TextComponent.fromLegacyText("§cUzycie: /mbanip <gracz|IP> <global|serwer> <czas> <powod>"));
             return;

@@ -13,6 +13,7 @@ import java.nio.file.Files;
 public class BanManagerPlugin extends Plugin {
 
     private BanStorage storage;
+    private MaintenanceManager maintenance;
     private String fallbackServer = "";
 
     @Override
@@ -22,14 +23,21 @@ public class BanManagerPlugin extends Plugin {
 
         storage = new BanStorage(this);
         storage.load();
+        maintenance = new MaintenanceManager();
 
         getProxy().getPluginManager().registerCommand(this, new BanCommand(this));
         getProxy().getPluginManager().registerCommand(this, new BanIpCommand(this));
         getProxy().getPluginManager().registerCommand(this, new UnbanCommand(this));
         getProxy().getPluginManager().registerCommand(this, new UnbanIpCommand(this));
         getProxy().getPluginManager().registerCommand(this, new BanListCommand(this));
+        getProxy().getPluginManager().registerCommand(this, new ShutdownCommand(this));
+        getProxy().getPluginManager().registerCommand(this, new BroadcastCommand());
+        getProxy().getPluginManager().registerCommand(this, new FindCommand());
+        getProxy().getPluginManager().registerCommand(this, new SendCommand());
+        getProxy().getPluginManager().registerCommand(this, new ServersCommand(this));
 
         getProxy().getPluginManager().registerListener(this, new BanListener(this));
+        getProxy().getPluginManager().registerListener(this, new MaintenanceListener(this));
 
         getProxy().registerChannel("banmanager:query");
         getProxy().getPluginManager().registerListener(this, new BanQueryListener(this));
@@ -39,6 +47,10 @@ public class BanManagerPlugin extends Plugin {
 
     public BanStorage getStorage() {
         return storage;
+    }
+
+    public MaintenanceManager getMaintenance() {
+        return maintenance;
     }
 
     public String getFallbackServer() {
