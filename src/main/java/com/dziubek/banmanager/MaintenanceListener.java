@@ -43,7 +43,7 @@ public class MaintenanceListener implements Listener {
 
         event.setCancelled(true);
         String text = "§4§lSERWER ZAMKNIĘTY\n§7" + (plugin.getMaintenance().isAllClosed()
-                ? "Cały proxy jest obecnie zamknięty." : "Serwer '" + server + "' jest obecnie zamknięty.");
+                ? "Cały proxy jest obecnie zamknięty (prace techniczne)." : "Serwer '" + server + "' jest obecnie zamknięty (prace techniczne).");
         if (player.getServer() != null) {
             player.sendMessage(TextComponent.fromLegacyText(text));
         } else {

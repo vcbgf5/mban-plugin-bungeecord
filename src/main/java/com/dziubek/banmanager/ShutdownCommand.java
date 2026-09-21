@@ -58,7 +58,7 @@ public class ShutdownCommand extends Command implements TabExecutor {
                 sender.sendMessage(TextComponent.fromLegacyText("§cUzycie: /shutdown cancel <serwer|all>"));
                 return;
             }
-            handleCancel(sender, args[1]);
+            cancel(sender, args[1]);
             return;
         }
 
@@ -88,7 +88,7 @@ public class ShutdownCommand extends Command implements TabExecutor {
             return;
         }
 
-        String reason = args.length > 2 ? String.join(" ", Arrays.copyOfRange(args, 2, args.length)) : "Konserwacja";
+        String reason = args.length > 2 ? String.join(" ", Arrays.copyOfRange(args, 2, args.length)) : "Prace techniczne";
         String by = sender instanceof ProxiedPlayer ? sender.getName() : "Console";
 
         sender.sendMessage(TextComponent.fromLegacyText("§aZaplanowano zamknięcie " + describeScope(scope) + " za " + seconds + "s. Powód: " + reason));
@@ -156,7 +156,8 @@ public class ShutdownCommand extends Command implements TabExecutor {
         return null;
     }
 
-    private void handleCancel(CommandSender sender, String rawScope) {
+    /** Odwoluje aktywne odliczenie (jesli trwa) i otwiera z powrotem - uzywane tez przez /startserver. */
+    public void cancel(CommandSender sender, String rawScope) {
         String scope = rawScope.equalsIgnoreCase("all") ? "ALL" : rawScope;
         ScheduledTask task = activeCountdowns.remove(scope);
         boolean hadCountdown = task != null;
