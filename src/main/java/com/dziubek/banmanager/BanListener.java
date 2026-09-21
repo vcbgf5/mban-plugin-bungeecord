@@ -1,5 +1,6 @@
 package com.dziubek.banmanager;
 
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -36,7 +37,7 @@ public class BanListener implements Listener {
         }
         if (ban != null) {
             event.setCancelled(true);
-            event.setCancelReason(MenuHelper.banMessage(ban));
+            event.setCancelReason(TextComponent.toLegacyText(MenuHelper.banMessage(ban)));
         }
     }
 
