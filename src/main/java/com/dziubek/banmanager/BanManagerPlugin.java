@@ -31,6 +31,9 @@ public class BanManagerPlugin extends Plugin {
 
         getProxy().getPluginManager().registerListener(this, new BanListener(this));
 
+        getProxy().registerChannel("banmanager:query");
+        getProxy().getPluginManager().registerListener(this, new BanQueryListener(this));
+
         getLogger().info("BanManager wlaczony - aktywnych banow: " + storage.count());
     }
 
