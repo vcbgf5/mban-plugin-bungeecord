@@ -94,6 +94,15 @@ public class ShutdownCommand extends Command implements TabExecutor {
         String reason = args.length > 2 ? String.join(" ", Arrays.copyOfRange(args, 2, args.length)) : "Prace techniczne";
         String by = sender instanceof ProxiedPlayer ? sender.getName() : "Console";
 
+        // Flaga "zamkniety" ustawia sie JUZ TERAZ, nie dopiero po zakonczeniu odliczania - inaczej
+        // przez caly czas trwania odliczania kompas/hologram w lobby (i kolejka) dalej widzialyby
+        // ten serwer jako normalnie otwarty, mimo ze admin juz zapowiedzial zamkniecie.
+        if (scope.equals("ALL")) {
+            plugin.getMaintenance().closeAll();
+        } else {
+            plugin.getMaintenance().close(scope);
+        }
+
         sender.sendMessage(TextComponent.fromLegacyText("§aZaplanowano zamknięcie " + describeScope(scope) + " za " + seconds + "s. Powód: " + reason));
         startCountdown(scope, seconds, reason, by);
     }
@@ -127,8 +136,9 @@ public class ShutdownCommand extends Command implements TabExecutor {
     }
 
     private void executeShutdown(String scope, String reason, String by) {
+        // Flaga "zamkniety" jest juz ustawiona (patrz execute()) - tu tylko realnie wykonujemy
+        // zamkniecie (sygnal + rozlaczenie/przeniesienie graczy).
         if (scope.equals("ALL")) {
-            plugin.getMaintenance().closeAll();
             // sygnał SHUTDOWN musi polecieć ZANIM rozłączymy graczy - inaczej nie ma już transportu
             for (ServerInfo info : ProxyServer.getInstance().getServers().values()) {
                 ControlChannel.sendShutdown(plugin, info, reason);
@@ -140,7 +150,6 @@ public class ShutdownCommand extends Command implements TabExecutor {
             return;
         }
 
-        plugin.getMaintenance().close(scope);
         ServerInfo info = ProxyServer.getInstance().getServerInfo(scope);
         if (info == null) {
             return;
