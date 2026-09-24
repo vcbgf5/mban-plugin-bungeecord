@@ -17,6 +17,7 @@ public class BanManagerPlugin extends Plugin {
     private MaintenanceManager maintenance;
     private VanishManager vanish;
     private WarnManager warnings;
+    private ServerIconManager serverIcon;
     private String fallbackServer = "";
     private int controlPortOffset = 2000;
     private String controlSecret = "zmien-to-haslo";
@@ -35,6 +36,8 @@ public class BanManagerPlugin extends Plugin {
         maintenance = new MaintenanceManager();
         vanish = new VanishManager();
         warnings = new WarnManager();
+        serverIcon = new ServerIconManager(this);
+        serverIcon.load();
 
         getProxy().getPluginManager().registerCommand(this, new BanCommand(this));
         getProxy().getPluginManager().registerCommand(this, new BanIpCommand(this));
@@ -61,6 +64,7 @@ public class BanManagerPlugin extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new WarningsCommand(this));
         getProxy().getPluginManager().registerCommand(this, new ClearChatCommand());
         getProxy().getPluginManager().registerCommand(this, new ReloadCommand(this));
+        getProxy().getPluginManager().registerCommand(this, new ReloadIconCommand(this));
         getProxy().getPluginManager().registerCommand(this, new MuteCommand(this));
         getProxy().getPluginManager().registerCommand(this, new UnmuteCommand(this));
         getProxy().getPluginManager().registerCommand(this, new MuteListCommand(this));
@@ -69,6 +73,7 @@ public class BanManagerPlugin extends Plugin {
         getProxy().getPluginManager().registerListener(this, new MaintenanceListener(this));
         getProxy().getPluginManager().registerListener(this, new MuteListener(this));
         getProxy().getPluginManager().registerListener(this, new VanishSyncListener(this));
+        getProxy().getPluginManager().registerListener(this, new ServerIconListener(this));
 
         getProxy().registerChannel("banmanager:query");
         getProxy().getPluginManager().registerListener(this, new BanQueryListener(this));
@@ -105,6 +110,10 @@ public class BanManagerPlugin extends Plugin {
 
     public WarnManager getWarnings() {
         return warnings;
+    }
+
+    public ServerIconManager getServerIcon() {
+        return serverIcon;
     }
 
     public String getFallbackServer() {
