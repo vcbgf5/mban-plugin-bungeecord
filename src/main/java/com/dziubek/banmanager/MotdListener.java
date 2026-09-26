@@ -1,17 +1,22 @@
 package com.dziubek.banmanager;
 
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
- * Własne MOTD: gradientowa nazwa sieci w 1. linii, w 2. linii (mniejsza/szara, "cichsza" niż
- * pogrubiony tytuł) liczba graczy na każdym skonfigurowanym serwerze proxy + suma łączna.
+ * Własne MOTD: krótki, mały napis (nazwa sieci + BOXPVP), bez liczby graczy w samym opisie -
+ * rozbicie graczy per-serwer + suma widać dopiero po najechaniu na licznik graczy (podpięte
+ * pod "sample" listy graczy - Minecraft renderuje ją jako tooltip pod liczbą online/max).
  */
 public class MotdListener implements Listener {
 
@@ -31,30 +36,26 @@ public class MotdListener implements Listener {
             return;
         }
 
-        String title = GradientText.apply(motd.getNetworkName(), GRADIENT_FROM, GRADIENT_TO, true);
+        String title = GradientText.apply(motd.getNetworkName(), GRADIENT_FROM, GRADIENT_TO, false);
+        String subtitle = "§7BOXPVP";
 
-        StringBuilder statsLine = new StringBuilder("§7");
+        event.getResponse().setDescriptionComponent(
+                new TextComponent(TextComponent.fromLegacyText(title + "\n" + subtitle))
+        );
+
+        List<ServerPing.PlayerInfo> sample = new ArrayList<>();
         int total = 0;
-        boolean first = true;
         for (Map.Entry<String, String> entry : motd.getServers().entrySet()) {
             ServerInfo info = ProxyServer.getInstance().getServerInfo(entry.getKey());
             int online = info != null ? info.getPlayers().size() : 0;
             total += online;
-
-            if (!first) {
-                statsLine.append(" §8| §7");
-            }
-            statsLine.append(entry.getValue()).append(" §f").append(online);
-            first = false;
+            sample.add(new ServerPing.PlayerInfo("§7" + entry.getValue() + "§8: §f" + online, UUID.randomUUID()));
         }
-        if (!first) {
-            statsLine.append(" §8| §7Łącznie §f").append(total);
-        } else {
-            statsLine.append("Online łącznie: §f").append(total);
-        }
+        sample.add(new ServerPing.PlayerInfo("§7Łącznie§8: §f" + total, UUID.randomUUID()));
 
-        event.getResponse().setDescriptionComponent(
-                new TextComponent(TextComponent.fromLegacyText(title + "\n" + statsLine))
-        );
+        ServerPing.Players players = event.getResponse().getPlayers();
+        if (players != null) {
+            players.setSample(sample.toArray(new ServerPing.PlayerInfo[0]));
+        }
     }
 }
