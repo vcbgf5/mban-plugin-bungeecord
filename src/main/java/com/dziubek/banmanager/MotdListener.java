@@ -54,7 +54,7 @@ public class MotdListener implements Listener {
         }
 
         event.getResponse().setDescriptionComponent(
-                TextComponent.fromLegacyText(title + "\n" + statsLine)
+                new TextComponent(TextComponent.fromLegacyText(title + "\n" + statsLine))
         );
     }
 }
