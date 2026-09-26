@@ -18,6 +18,7 @@ public class BanManagerPlugin extends Plugin {
     private VanishManager vanish;
     private WarnManager warnings;
     private ServerIconManager serverIcon;
+    private MotdManager motd = new MotdManager();
     private String fallbackServer = "";
     private int controlPortOffset = 2000;
     private String controlSecret = "zmien-to-haslo";
@@ -28,6 +29,7 @@ public class BanManagerPlugin extends Plugin {
         fallbackServer = config.getString("fallback-server", "");
         controlPortOffset = config.getInt("control-port-offset", 2000);
         controlSecret = config.getString("control-secret", "zmien-to-haslo");
+        motd.load(config);
 
         storage = new BanStorage(this);
         storage.load();
@@ -74,6 +76,7 @@ public class BanManagerPlugin extends Plugin {
         getProxy().getPluginManager().registerListener(this, new MuteListener(this));
         getProxy().getPluginManager().registerListener(this, new VanishSyncListener(this));
         getProxy().getPluginManager().registerListener(this, new ServerIconListener(this));
+        getProxy().getPluginManager().registerListener(this, new MotdListener(this));
 
         getProxy().registerChannel("banmanager:query");
         getProxy().getPluginManager().registerListener(this, new BanQueryListener(this));
@@ -88,6 +91,7 @@ public class BanManagerPlugin extends Plugin {
         fallbackServer = config.getString("fallback-server", "");
         controlPortOffset = config.getInt("control-port-offset", 2000);
         controlSecret = config.getString("control-secret", "zmien-to-haslo");
+        motd.load(config);
         storage.load();
         mutes.load();
     }
@@ -114,6 +118,10 @@ public class BanManagerPlugin extends Plugin {
 
     public ServerIconManager getServerIcon() {
         return serverIcon;
+    }
+
+    public MotdManager getMotd() {
+        return motd;
     }
 
     public String getFallbackServer() {

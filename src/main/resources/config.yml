@@ -11,3 +11,15 @@ fallback-server: ''
 # kazdego BackendManagera na backendach - inaczej polaczenie zostanie odrzucone.
 control-port-offset: 2000
 control-secret: 'zmien-to-haslo'
+
+# Wlasne MOTD (opis serwera na liscie serwerow gracza) - 2 linijki: gradientowa nazwa sieci,
+# a pod nia liczba graczy na kazdym z podanych serwerow proxy + suma. Klucze pod "servers" MUSZA
+# byc dokladnie takie same jak nazwy serwerow w config.yml samego BungeeCorda/Waterfalla -
+# wartosc to tylko ladna nazwa do wyswietlenia. Kolejnosc w MOTD = kolejnosc wpisow ponizej.
+motd:
+  enabled: true
+  network-name: 'VantaNet'
+  servers:
+    ecosmp: 'EcoSMP'
+    lobby: 'Lobby'
+    boxpvp: 'BoxPvP'
