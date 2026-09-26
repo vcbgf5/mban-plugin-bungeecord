@@ -14,9 +14,10 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Własne MOTD: krótki, mały napis (nazwa sieci + BOXPVP), bez liczby graczy w samym opisie -
- * rozbicie graczy per-serwer + suma widać dopiero po najechaniu na licznik graczy (podpięte
- * pod "sample" listy graczy - Minecraft renderuje ją jako tooltip pod liczbą online/max).
+ * Własne MOTD: mała gradientowa nazwa sieci w 1. linii, pod nią rotująca się (co
+ * motd.ad-rotate-seconds) reklama z motd.ads - bez liczby graczy w samym opisie. Dokładne
+ * rozbicie graczy per-serwer + suma trafia do "sample" listy graczy - Minecraft renderuje ją
+ * jako tooltip pod liczbą online/max.
  */
 public class MotdListener implements Listener {
 
@@ -37,7 +38,7 @@ public class MotdListener implements Listener {
         }
 
         String title = GradientText.apply(motd.getNetworkName(), GRADIENT_FROM, GRADIENT_TO, false);
-        String subtitle = "§7BOXPVP";
+        String subtitle = currentAd(motd);
 
         event.getResponse().setDescriptionComponent(
                 new TextComponent(TextComponent.fromLegacyText(title + "\n" + subtitle))
@@ -57,5 +58,17 @@ public class MotdListener implements Listener {
         if (players != null) {
             players.setSample(sample.toArray(new ServerPing.PlayerInfo[0]));
         }
+    }
+
+    /** Wybiera aktualną reklamę z motd.ads na podstawie zegara - ta sama linia dla wszystkich
+     * pingujących w danym oknie ad-rotate-seconds, więc "rotuje się" tak samo u każdego. */
+    private static String currentAd(MotdManager motd) {
+        List<String> ads = motd.getAds();
+        if (ads.isEmpty()) {
+            return "";
+        }
+        long slot = System.currentTimeMillis() / 1000L / motd.getAdRotateSeconds();
+        int index = (int) (slot % ads.size());
+        return ads.get(index);
     }
 }

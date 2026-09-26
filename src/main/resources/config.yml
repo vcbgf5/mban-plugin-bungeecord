@@ -13,14 +13,20 @@ control-port-offset: 2000
 control-secret: 'zmien-to-haslo'
 
 # Wlasne MOTD (opis serwera na liscie serwerow gracza) - 2 male linijki: gradientowa nazwa
-# sieci i pod nia "BOXPVP", bez liczby graczy. Rozbicie graczy na kazdym z podanych serwerow
-# proxy + suma pokazuje sie dopiero po najechaniu myszka na licznik graczy (tooltip). Klucze pod
-# "servers" MUSZA byc dokladnie takie same jak nazwy serwerow w config.yml samego
-# BungeeCorda/Waterfalla - wartosc to tylko ladna nazwa do wyswietlenia. Kolejnosc w tooltipie =
-# kolejnosc wpisow ponizej.
+# sieci, a pod nia rotujaca sie reklama z listy "ads" (co ad-rotate-seconds sekund pokazuje
+# sie kolejna, ta sama dla wszystkich pingujacych w danym oknie czasu) - bez liczby graczy.
+# Rozbicie graczy na kazdym z podanych serwerow proxy + suma pokazuje sie dopiero po najechaniu
+# myszka na licznik graczy (tooltip). Klucze pod "servers" MUSZA byc dokladnie takie same jak
+# nazwy serwerow w config.yml samego BungeeCorda/Waterfalla - wartosc to tylko ladna nazwa do
+# wyswietlenia. Kolejnosc w tooltipie = kolejnosc wpisow ponizej.
 motd:
   enabled: true
   network-name: 'VantaNet'
+  ad-rotate-seconds: 4
+  ads:
+    - '§d§lTryb BoxPvP już wystartował!'
+    - '§a§lEcoSMP już jest!'
+    - '§b§lBoxPvP - nowe pety!'
   servers:
     ecosmp: 'EcoSMP'
     lobby: 'Lobby'
