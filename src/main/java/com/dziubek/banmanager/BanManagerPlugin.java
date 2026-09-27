@@ -22,6 +22,8 @@ public class BanManagerPlugin extends Plugin {
     private String fallbackServer = "";
     private int controlPortOffset = 2000;
     private String controlSecret = "zmien-to-haslo";
+    private boolean subdomainRoutingEnabled = false;
+    private String subdomainBaseDomain = "";
 
     @Override
     public void onEnable() {
@@ -30,6 +32,9 @@ public class BanManagerPlugin extends Plugin {
         controlPortOffset = config.getInt("control-port-offset", 2000);
         controlSecret = config.getString("control-secret", "zmien-to-haslo");
         motd.load(config);
+        Configuration subdomainRouting = config.getSection("subdomain-routing");
+        subdomainRoutingEnabled = subdomainRouting.getBoolean("enabled", false);
+        subdomainBaseDomain = subdomainRouting.getString("base-domain", "");
 
         storage = new BanStorage(this);
         storage.load();
@@ -77,6 +82,7 @@ public class BanManagerPlugin extends Plugin {
         getProxy().getPluginManager().registerListener(this, new VanishSyncListener(this));
         getProxy().getPluginManager().registerListener(this, new ServerIconListener(this));
         getProxy().getPluginManager().registerListener(this, new MotdListener(this));
+        getProxy().getPluginManager().registerListener(this, new SubdomainRouteListener(this));
 
         getProxy().registerChannel("banmanager:query");
         getProxy().getPluginManager().registerListener(this, new BanQueryListener(this));
@@ -92,6 +98,9 @@ public class BanManagerPlugin extends Plugin {
         controlPortOffset = config.getInt("control-port-offset", 2000);
         controlSecret = config.getString("control-secret", "zmien-to-haslo");
         motd.load(config);
+        Configuration subdomainRouting = config.getSection("subdomain-routing");
+        subdomainRoutingEnabled = subdomainRouting.getBoolean("enabled", false);
+        subdomainBaseDomain = subdomainRouting.getString("base-domain", "");
         storage.load();
         mutes.load();
     }
@@ -134,6 +143,14 @@ public class BanManagerPlugin extends Plugin {
 
     public String getControlSecret() {
         return controlSecret;
+    }
+
+    public boolean isSubdomainRoutingEnabled() {
+        return subdomainRoutingEnabled;
+    }
+
+    public String getSubdomainBaseDomain() {
+        return subdomainBaseDomain;
     }
 
     private Configuration loadOrCreateConfig() {

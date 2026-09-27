@@ -31,3 +31,13 @@ motd:
     ecosmp: 'EcoSMP'
     lobby: 'Lobby'
     boxpvp: 'BoxPvP'
+
+# Przekierowanie po subdomenie: gracz laczacy sie np. przez "test.vantanet.pl" trafia od razu na
+# serwer proxy o nazwie "test" (musi byc dokladnie taka nazwa serwera w config.yml samego
+# BungeeCorda/Waterfalla), zamiast na domyslny serwer. Dziala tylko dla PIERWSZEGO polaczenia z
+# proxy - pozniejsze /server dzialaja normalnie. WYMAGA, zeby DNS subdomeny (rekord A/CNAME,
+# najlatwiej wildcard "*.vantanet.pl") wskazywal na TEN SAM adres IP co glowna domena proxy -
+# to trzeba ustawic u dostawcy DNS, ten plugin tego nie zalatwia. base-domain puste = wylaczone.
+subdomain-routing:
+  enabled: true
+  base-domain: 'vantanet.pl'
